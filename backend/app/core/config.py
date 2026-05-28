@@ -29,9 +29,15 @@ class Settings(BaseSettings):
     DEFAULT_MODEL_PROVIDER: str = "dashscope"
     DEFAULT_MODEL_NAME: str = "qwen-plus"
     
+    # API Keys
+    DASHSCOPE_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = None
+    DEEPSEEK_API_KEY: Optional[str] = None
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"
 
 
 @lru_cache()

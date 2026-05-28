@@ -42,6 +42,9 @@ async_session_maker = async_sessionmaker(
 
 async def init_db():
     """Initialize database tables"""
+    # Import all models to ensure they are registered with Base.metadata
+    from app.models import user, agent, conversation  # noqa: F401
+    
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
