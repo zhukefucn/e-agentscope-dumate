@@ -94,9 +94,8 @@ const handleLogin = async () => {
   const success = await userStore.login(loginForm.username, loginForm.password)
   
   if (success) {
-    router.push('/')
-  } else {
-    ElMessage.error('登录失败，请检查用户名和密码')
+    // 使用 window.location 强制刷新页面跳转
+    window.location.href = '/dashboard'
   }
 }
 </script>
@@ -113,86 +112,57 @@ const handleLogin = async () => {
 
 .login-card {
   width: 100%;
-  max-width: 420px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 48px 40px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .login-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 28px;
+  color: #333;
   margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
+  font-weight: 600;
 }
 
 .login-header p {
-  font-size: 14px;
   color: #666;
   margin: 0;
+  font-size: 14px;
 }
 
 .login-form {
-  margin-bottom: 24px;
-}
-
-.login-form :deep(.el-input__wrapper) {
-  padding: 0 16px;
-  border-radius: 8px;
-}
-
-.login-form :deep(.el-form-item) {
-  margin-bottom: 24px;
+  margin-top: 20px;
 }
 
 .login-button {
   width: 100%;
-  height: 48px;
+  height: 44px;
   font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  font-weight: 500;
 }
 
 .login-footer {
   text-align: center;
-  font-size: 14px;
+  margin-top: 20px;
   color: #666;
+  font-size: 14px;
 }
 
 .register-link {
   color: #667eea;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
   margin-left: 4px;
-  transition: color 0.3s ease;
 }
 
 .register-link:hover {
-  color: #764ba2;
-}
-
-@media (max-width: 480px) {
-  .login-card {
-    padding: 32px 24px;
-  }
-  
-  .login-header h1 {
-    font-size: 28px;
-  }
+  text-decoration: underline;
 }
 </style>

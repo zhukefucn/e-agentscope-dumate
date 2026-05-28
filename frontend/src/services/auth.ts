@@ -9,7 +9,7 @@ export const authApi = {
 
   // 注册
   register(data: RegisterRequest): Promise<User> {
-    return api.post<User>('/auth/register')
+    return api.post<User>('/auth/register', data)
   },
 
   // 获取当前用户信息

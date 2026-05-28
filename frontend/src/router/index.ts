@@ -67,25 +67,36 @@ const router = createRouter({
   routes,
 })
 
-// 路由守卫
+// 简化的路由守卫
 router.beforeEach(async (to, from, next) => {
-  const userStore = useUserStore()
-  
   // 设置页面标题
   const title = to.meta.title as string
   document.title = title ? `${title} - E-AgentScope` : 'E-AgentScope'
   
-  // 初始化用户信息
-  if (userStore.token && !userStore.user) {
-    await userStore.initUser()
-  }
-
+  // 检查是否需要登录
   const requiresAuth = to.meta.requiresAuth !== false
-
-  if (requiresAuth && !userStore.isLoggedIn) {
+  
+  // 直接从 localStorage 检查 token（避免 Pinia 未初始化的问题）
+  const token = localStorage.getItem('token')
+  const isLoggedIn = !!token
+  
+  if (requiresAuth && !isLoggedIn) {
+    // 需要登录但未登录，跳转到登录页
     next('/login')
-  } else if (!requiresAuth && userStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+  } else if (!requiresAuth && isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+    // 已登录但访问登录/注册页，跳转到首页
     next('/dashboard')
+  } else if (requiresAuth && isLoggedIn) {
+    // 需要登录且已登录，尝试初始化用户信息
+    const userStore = useUserStore()
+    if (!userStore.user) {
+      try {
+        await userStore.initUser()
+      } catch (error) {
+        console.error('初始化用户信息失败:', error)
+      }
+    }
+    next()
   } else {
     next()
   }
