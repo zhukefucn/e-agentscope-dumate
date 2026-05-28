@@ -243,13 +243,24 @@ onMounted(async () => {
   // 等待一帧，确保 localStorage 中的 token 已经被读取
   await new Promise(resolve => setTimeout(resolve, 100))
   
-  await Promise.all([
-    agentStore.fetchAgents(1, 100),
-    loadStats(),
-  ])
+  // 检查是否有 token，没有则跳过 API 调用
+  const token = localStorage.getItem('token')
+  if (!token) {
+    console.log('No token found, skipping API calls')
+    return
+  }
   
-  if (agentStore.agents.length > 0) {
-    selectedAgentId.value = agentStore.agents[0].id
+  try {
+    await Promise.all([
+      agentStore.fetchAgents(1, 100),
+      loadStats(),
+    ])
+    
+    if (agentStore.agents.length > 0) {
+      selectedAgentId.value = agentStore.agents[0].id
+    }
+  } catch (error) {
+    console.error('Failed to load data:', error)
   }
 })
 

@@ -9,11 +9,9 @@
       <el-form
         ref="loginFormRef"
         :model="loginForm"
-        :rules="loginRules"
         class="login-form"
-        @submit.prevent="handleLogin"
       >
-        <el-form-item prop="username">
+        <el-form-item>
           <el-input
             v-model="loginForm.username"
             placeholder="用户名"
@@ -23,7 +21,7 @@
           />
         </el-form-item>
         
-        <el-form-item prop="password">
+        <el-form-item>
           <el-input
             v-model="loginForm.password"
             type="password"
@@ -40,7 +38,7 @@
             type="primary"
             size="large"
             class="login-button"
-            :loading="userStore.loading"
+            :loading="loading"
             @click="handleLogin"
           >
             登录
@@ -61,43 +59,63 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import { useUserStore } from '@/stores/user'
+import axios from 'axios'
 
 const router = useRouter()
-const userStore = useUserStore()
-
-const loginFormRef = ref<FormInstance>()
 
 const loginForm = reactive({
   username: '',
   password: '',
 })
 
-const loginRules: FormRules = {
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度为 3-20 个字符', trigger: 'blur' },
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' },
-  ],
-}
+const loading = ref(false)
 
 const handleLogin = async () => {
-  if (!loginFormRef.value) return
+  console.log('handleLogin called', loginForm)
   
-  const valid = await loginFormRef.value.validate().catch(() => false)
-  if (!valid) return
+  if (!loginForm.username || !loginForm.password) {
+    ElMessage.error('请输入用户名和密码')
+    return
+  }
   
-  const success = await userStore.login(loginForm.username, loginForm.password)
-  
-  if (success) {
-    // 等待 200ms 确保 localStorage 已更新
+  try {
+    loading.value = true
+    console.log('Calling login API...')
+    
+    // 直接调用登录 API
+    const response = await axios.post('http://localhost:8000/api/auth/login', {
+      username: loginForm.username,
+      password: loginForm.password
+    })
+    
+    console.log('Login response:', response.data)
+    
+    // 保存 token
+    localStorage.setItem('token', response.data.access_token)
+    console.log('Token saved to localStorage')
+    
+    // 获取用户信息
+    const userResponse = await axios.get('http://localhost:8000/api/auth/me', {
+      headers: {
+        'Authorization': `Bearer ${response.data.access_token}`
+      }
+    })
+    
+    console.log('User info:', userResponse.data)
+    localStorage.setItem('user', JSON.stringify(userResponse.data))
+    
+    ElMessage.success('登录成功')
+    
+    // 跳转到首页
     setTimeout(() => {
-      router.push('/dashboard')
-    }, 200)
+      window.location.href = '/dashboard'
+    }, 500)
+    
+  } catch (error: any) {
+    console.error('Login failed:', error)
+    ElMessage.error(error?.response?.data?.detail || '登录失败')
+  } finally {
+    loading.value = false
   }
 }
 </script>
