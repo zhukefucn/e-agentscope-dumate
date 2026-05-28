@@ -5,22 +5,31 @@ import { authApi } from '@/services/auth'
 import { ElMessage } from 'element-plus'
 
 export const useUserStore = defineStore('user', () => {
-  // 从 localStorage 初始化
-  const token = ref<string | null>(localStorage.getItem('token'))
-  
-  // 尝试从 localStorage 恢复用户信息
-  let savedUser = null
-  try {
-    const userStr = localStorage.getItem('user')
-    if (userStr) {
-      savedUser = JSON.parse(userStr)
+  // 从 localStorage 初始化 - 立即读取，不要延迟
+  const token = ref<string | null>(null)
+  const user = ref<User | null>(null)
+  const loading = ref(false)
+
+  // 立即从 localStorage 读取 token
+  const initFromStorage = () => {
+    try {
+      const savedToken = localStorage.getItem('token')
+      const savedUser = localStorage.getItem('user')
+      
+      if (savedToken) {
+        token.value = savedToken
+      }
+      
+      if (savedUser) {
+        user.value = JSON.parse(savedUser)
+      }
+    } catch (e) {
+      console.error('Failed to init from storage:', e)
     }
-  } catch (e) {
-    console.error('Failed to parse saved user:', e)
   }
   
-  const user = ref<User | null>(savedUser)
-  const loading = ref(false)
+  // 立即执行初始化
+  initFromStorage()
 
   // 计算属性：只要 token 存在就认为已登录
   const isLoggedIn = computed(() => !!token.value)
@@ -54,7 +63,7 @@ export const useUserStore = defineStore('user', () => {
       // 1. 调用登录接口
       const response = await authApi.login({ username, password })
       
-      // 2. 保存 token
+      // 2. 保存 token - 立即保存到 ref 和 localStorage
       token.value = response.access_token
       localStorage.setItem('token', response.access_token)
       

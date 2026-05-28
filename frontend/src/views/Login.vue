@@ -94,8 +94,10 @@ const handleLogin = async () => {
   const success = await userStore.login(loginForm.username, loginForm.password)
   
   if (success) {
-    // 使用 window.location 强制刷新页面跳转
-    window.location.href = '/dashboard'
+    // 等待 200ms 确保 localStorage 已更新
+    setTimeout(() => {
+      router.push('/dashboard')
+    }, 200)
   }
 }
 </script>

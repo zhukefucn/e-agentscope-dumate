@@ -240,6 +240,9 @@ const recentAgents = computed(() => {
 
 // 初始化
 onMounted(async () => {
+  // 等待一帧，确保 localStorage 中的 token 已经被读取
+  await new Promise(resolve => setTimeout(resolve, 100))
+  
   await Promise.all([
     agentStore.fetchAgents(1, 100),
     loadStats(),

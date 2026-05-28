@@ -1,0 +1,22 @@
+- generic [ref=e3]:
+  - heading "调试页面" [level=1] [ref=e4]
+  - generic [ref=e5]:
+    - generic [ref=e6]: LocalStorage 状态
+    - generic [ref=e8]:
+      - paragraph [ref=e9]:
+        - strong [ref=e10]: "Token:"
+        - text: 存在 (eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...)
+      - paragraph [ref=e11]:
+        - strong [ref=e12]: "User:"
+        - text: "{\"id\":2,\"username\":\"demo\",\"email\":\"demo@test.com\",\"is_active\":true,\"created_at\":\"2026-05-28T02:09:27.809583\"}"
+  - generic [ref=e13]:
+    - generic [ref=e14]: 测试 API
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - button "测试登录" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: 测试登录
+        - button "测试获取用户信息" [active] [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 测试获取用户信息
+        - button "清除 Storage" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: 清除 Storage
+      - generic [ref=e24]: "用户信息: { \"id\": 2, \"username\": \"demo\", \"email\": \"demo@test.com\", \"is_active\": true, \"created_at\": \"2026-05-28T02:09:27.809583\" } 用户信息已保存到 localStorage"

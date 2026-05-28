@@ -3,6 +3,12 @@ import { useUserStore } from '@/stores/user'
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/debug',
+    name: 'Debug',
+    component: () => import('@/views/Debug.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
